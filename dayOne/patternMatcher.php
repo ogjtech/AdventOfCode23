@@ -11,24 +11,22 @@ $validValues = [
     "seven" => "7",
     "eight" => "8",
     "nine" => "9"];
-$pattern = join('|', array_keys($validValues)) . '|\\d';
 
 $numbers = [];
 
 foreach ($coords as $s) {
-    $matches = [];
-    if (!preg_match_all("/$pattern/i", $s, $matches) > 0) {
-        continue;
+    echo "$s turns into ";
+    foreach (array_keys($validValues) as $pattern) {
+        $s = str_replace($pattern, "$pattern$validValues[$pattern]$pattern", $s);
     }
-    $pregs = array_filter(array_values($matches[0]), function ($val) {
-        return ctype_digit($val) | ctype_alpha($val);
-    });
 
-    $firstNum = ctype_alpha(reset($pregs)) ? $validValues[reset($pregs)] : reset($pregs);
-    $lastNum = ctype_alpha(end($pregs)) ? $validValues[end($pregs)] : end($pregs);
-    $numToAdd = $firstNum . $lastNum;
+    echo "$s, which becomes ";
+    $intOnly = array_filter(mb_str_split($s), "ctype_digit");
+    echo join('', $intOnly) . "\n";
 
-    echo var_export((int)$numToAdd) . "\n";
+    $numToAdd = reset($intOnly) . end($intOnly);
+
+    echo var_export($numToAdd, true) . "\n";
     $numbers[] = (int)$numToAdd;
 }
 var_export(array_sum($numbers));
